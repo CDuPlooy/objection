@@ -20,6 +20,8 @@ import { androidshell } from "../android/shell";
 import { userinterface } from "../android/userinterface";
 import { proxy } from "../android/proxy";
 import { general } from "../android/general";
+import { monitor } from "../android/monitor";
+
 
 export const android = {
   // android clipboard
@@ -88,4 +90,7 @@ export const android = {
   // android user interface
   androidUiScreenshot: () => userinterface.screenshot(),
   androidUiSetFlagSecure: (v: boolean): Promise<void> => userinterface.setFlagSecure(v),
+
+  // android monitor
+  androidMonitorWatchLogs: () => monitor.watchLogs(),
 };

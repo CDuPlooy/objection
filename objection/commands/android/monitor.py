@@ -20,3 +20,7 @@ def string_canary(args: list) -> None:
 
     api = state_connection.get_api()
     api.android_live_print_class_instances(target_class)
+
+def watch_logs(args: list) -> None:
+    api = state_connection.get_api()
+    api.android_monitor_watch_logs()

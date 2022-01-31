@@ -20,6 +20,8 @@ from ..commands.android import keystore
 from ..commands.android import pinning as android_pinning
 from ..commands.android import proxy as android_proxy
 from ..commands.android import root
+from ..commands.android import monitor as android_monitor
+
 from ..commands.ios import binary
 from ..commands.ios import bundles
 from ..commands.ios import cookies
@@ -508,6 +510,15 @@ COMMANDS = {
                         'exec': ui.android_flag_secure
                     },
                 }
+            },
+        'monitor': {
+                'meta': 'Commands to work with android function monitoring',
+                'commands': {
+                    'logs': {
+                        'meta': 'Enable android log dumping',
+                        'exec': android_monitor.watch_logs
+                    }
+                },
             },
         },
     },
