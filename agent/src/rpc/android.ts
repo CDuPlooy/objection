@@ -1,9 +1,16 @@
-import { clipboard } from "../android/clipboard";
-import { androidfilesystem } from "../android/filesystem";
-import { heap } from "../android/heap";
-import { hooking } from "../android/hooking";
-import { intent } from "../android/intent";
-import { keystore } from "../android/keystore";
+import * as clipboard from "../android/clipboard";
+import * as androidfilesystem from "../android/filesystem";
+import * as heap from "../android/heap";
+import * as hooking from "../android/hooking";
+import * as intent from "../android/intent";
+import * as keystore from "../android/keystore";
+import * as sslpinning from "../android/pinning";
+import * as root from "../android/root";
+import * as androidshell from "../android/shell";
+import * as userinterface from "../android/userinterface";
+import * as proxy from "../android/proxy";
+import * as general from "../android/general";
+
 import {
   IHeapObject,
   IJavaField,
@@ -22,6 +29,7 @@ import { proxy } from "../android/proxy";
 import { general } from "../android/general";
 import { monitor } from "../android/monitor";
 
+import { JavaMethodsOverloadsResult } from "../android/lib/types";
 
 export const android = {
   // android clipboard
@@ -46,6 +54,7 @@ export const android = {
 
   // android hooking
   androidHookingGetClassMethods: (className: string): Promise<string[]> => hooking.getClassMethods(className),
+  androidHookingGetClassMethodsOverloads: (className: string, methodAllowList: string[] = [], loader?: string): Promise<JavaMethodsOverloadsResult> => hooking.getClassMethodsOverloads(className, methodAllowList, loader),
   androidHookingGetClasses: (): Promise<string[]> => hooking.getClasses(),
   androidHookingGetClassLoaders: (): Promise<string[]> => hooking.getClassLoaders(),
   androidHookingGetCurrentActivity: (): Promise<ICurrentActivityFragment> => hooking.getCurrentActivity(),
@@ -54,10 +63,10 @@ export const android = {
   androidHookingListServices: (): Promise<string[]> => hooking.getServices(),
   androidHookingSetMethodReturn: (fqClazz: string, filterOverload: string | null, ret: boolean) =>
     hooking.setReturnValue(fqClazz, filterOverload, ret),
-  androidHookingWatchClass: (clazz: string): Promise<void> => hooking.watchClass(clazz),
-  androidHookingWatchMethod: (fqClazz: string, filterOverload: string | null, dargs: boolean,
-    dbt: boolean, dret: boolean): Promise<void> =>
-    hooking.watchMethod(fqClazz, filterOverload, dargs, dbt, dret),
+  androidHookingWatch: (pattern: string, watchArgs: boolean, watchBacktrace: boolean, watchRet: boolean): Promise<void> =>
+    hooking.watch(pattern, watchArgs, watchBacktrace, watchRet),
+  androidHookingEnumerate: (query: string): Promise<Java.EnumerateMethodsMatchGroup[]> => hooking.javaEnumerate(query),
+  androidHookingLazyWatchForPattern: (query: string): void => hooking.lazyWatchForPattern(query),
 
   // android heap methods
   androidHeapEvaluateHandleMethod: (handle: number, js: string): Promise<void> => heap.evaluate(handle, js),

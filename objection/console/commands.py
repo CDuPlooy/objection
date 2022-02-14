@@ -325,25 +325,16 @@ COMMANDS = {
                     },
                     'watch': {
                         'meta': 'Watch for Android Java invocations',
-                        'commands': {
-                            'class': {
-                                'meta': 'Watches for invocations of all methods in a class',
-                                'flags': ['--dump-args', '--dump-backtrace', '--dump-return'],
-                                'exec': android_hooking.watch_class,
-                            },
-                            'class_method': {
-                                'meta': 'Watches for invocations of a specific class method',
-                                'flags': ['--dump-args', '--dump-backtrace', '--dump-return'],
-                                'exec': android_hooking.watch_class_method
-                            }
-                        }
+                        'exec': android_hooking.watch,
+                        'flags': ['--dump-args', '--dump-backtrace', '--dump-return']
                     },
                     'set': {
                         'meta': 'Set various values',
                         'commands': {
                             'return_value': {
                                 'meta': 'Set a methods return value. Supports only boolean returns.',
-                                'exec': android_hooking.set_method_return_value
+                                'exec': android_hooking.set_method_return_value,
+                                'flags': ['--dump-args', '--dump-return', '--dump-backtrace']
                             }
                         }
                     },
@@ -358,16 +349,12 @@ COMMANDS = {
                     },
                     'search': {
                         'meta': 'Search for various classes and or methods',
-                        'commands': {
-                            'classes': {
-                                'meta': 'Search for Java classes matching a name',
-                                'exec': android_hooking.search_class
-                            },
-                            'methods': {
-                                'meta': 'Search for Java methods matching a name',
-                                'exec': android_hooking.search_methods
-                            }
-                        }
+                        'exec': android_hooking.search,
+                        'flags': ['--json', '--only-classes']
+                    },
+                    'notify': {
+                        'meta': 'Notify when a class becomes available',
+                        'exec': android_hooking.notify
                     },
                     'generate': {
                         'meta': 'Generate Frida hooks for Android',
@@ -522,9 +509,8 @@ COMMANDS = {
             },
         },
     },
-
     # ios commands
-    'ios': {
+        'ios': {
         'meta': 'Commands specific to iOS',
         'commands': {
             'info': {
@@ -692,18 +678,8 @@ COMMANDS = {
                     },
                     'watch': {
                         'meta': 'Watch invocations of classes and methods',
-                        'commands': {
-                            'class': {
-                                'meta': 'Hook all methods in a class and report on invocations',
-                                'flags': ['--include-parents'],
-                                'exec': ios_hooking.watch_class
-                            },
-                            'method': {
-                                'meta': 'Hook a specific method and report on invocations',
-                                'flags': ['--dump-args', '--dump-backtrace', '--dump-return'],
-                                'exec': ios_hooking.watch_class_method
-                            }
-                        }
+                        'exec': ios_hooking.watch,
+                        'flags': ['--dump-args', '--dump-backtrace', '--dump-return'],
                     },
                     'set': {
                         'meta': 'Set various values',
@@ -716,16 +692,8 @@ COMMANDS = {
                     },
                     'search': {
                         'meta': 'Search for various classes and or methods',
-                        'commands': {
-                            'classes': {
-                                'meta': 'Search for Objective-C classes matching a name',
-                                'exec': ios_hooking.search_class
-                            },
-                            'methods': {
-                                'meta': 'Search for Objective-C method matching a name',
-                                'exec': ios_hooking.search_method
-                            }
-                        }
+                        'exec': ios_hooking.search,
+                        'flags': ['--json', '--only-classes']
                     },
                     'generate': {
                         'meta': 'Generate Frida hooks for iOS',
@@ -738,7 +706,7 @@ COMMANDS = {
                                 'meta': 'Simple hooks for each Class method',
                                 'exec': ios_generate.simple
                             }
-                        }
+                        },
                     }
                 }
             },
