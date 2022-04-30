@@ -65,3 +65,29 @@ export interface IKeyStoreDetail {
   isTrustedUserPresenceRequired?: string;
   isUserConfirmationRequired?: string;
 }
+
+// I think these types will be generic, so we can create an IExtendedComponentInfo which has aliases IActivityInfo etc etc
+
+export interface IExtendedComponentInfo {
+  exported: boolean;
+  enabled: boolean,
+  processName: string,
+  splitName: string,
+  name: string,
+  permission?: string,
+};
+
+// In the Android docs for example, a BroadcastReceiverInfo object just uses the ActivityInfo class
+// so these should be fairly accurate imo
+export type IActivityInfo = IExtendedComponentInfo
+export type IServiceInfo = IExtendedComponentInfo
+export type IBroadcastReceiverInfo = IExtendedComponentInfo
+
+// An example of what to do if you want some other fields
+export interface IContentProviderInfo extends IExtendedComponentInfo {
+  readPermission: string;
+  writePermission: string;
+  multiprocess: boolean;
+  isSyncable: boolean;
+  authority: string;
+}

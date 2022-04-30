@@ -340,6 +340,7 @@ def show_registered_services(args: list = None) -> None:
     click.secho('\nFound {0} classes'.format(len(services)), bold=True)
 
 
+# TODO: Change this to use the activities object and rich
 def show_registered_activities(args: list = None) -> None:
     """
         Enumerate all registered Activities

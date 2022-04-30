@@ -1,7 +1,7 @@
 import { colors as c } from "../lib/color";
 import { IJob } from "../lib/interfaces";
 import * as jobs from "../lib/jobs";
-import { ICurrentActivityFragment } from "./lib/interfaces";
+import { IActivityInfo, IServiceInfo, ICurrentActivityFragment, IBroadcastReceiverInfo, IContentProviderInfo } from "./lib/interfaces";
 import {
   getApplicationContext,
   R,
@@ -416,22 +416,29 @@ export const getCurrentActivity = (): Promise<ICurrentActivityFragment> => {
   });
 };
 
-export const getActivities = (): Promise<string[]> => {
+export const getActivities = (): Promise<IActivityInfo[]> => {
   return wrapJavaPerform(() => {
 
     const packageManager: PackageManager = Java.use("android.content.pm.PackageManager");
     const GET_ACTIVITIES = packageManager.GET_ACTIVITIES.value;
     const context = getApplicationContext();
 
-    return Array.prototype.concat(context.getPackageManager()
-      .getPackageInfo(context.getPackageName(), GET_ACTIVITIES).activities.value.map((activityInfo) => {
-        return activityInfo.name.value;
-      }),
-    );
+    return context.getPackageManager()
+      .getPackageInfo(context.getPackageName(), GET_ACTIVITIES).activities.value.map(activityInfo => {
+        const info: IActivityInfo = {
+          exported: activityInfo.exported.value,
+          enabled: activityInfo.enabled.value,
+          processName: activityInfo.processName.value,
+          splitName: activityInfo.splitName.value,
+          name: activityInfo.name.value,
+          permission: activityInfo.permission.value,
+        };
+        return info;
+      })
   });
 };
 
-export const getServices = (): Promise<string[]> => {
+export const getServices = (): Promise<IServiceInfo[]> => {
   return wrapJavaPerform(() => {
     const activityThread: ActivityThread = Java.use("android.app.ActivityThread");
     const arrayMap: ArrayMap = Java.use("android.util.ArrayMap");
@@ -451,17 +458,23 @@ export const getServices = (): Promise<string[]> => {
       });
     });
 
-    services = services.concat(context.getPackageManager()
-      .getPackageInfo(context.getPackageName(), GET_SERVICES).services.value.map((activityInfo) => {
-        return activityInfo.name.value;
-      }),
-    );
-
-    return services;
+    return services.concat(context.getPackageManager()
+      .getPackageInfo(context.getPackageName(), GET_SERVICES).services.value.map((servicesInfo) => {
+        const info: IServiceInfo = {
+          exported: servicesInfo.exported.value,
+          enabled: servicesInfo.enabled.value,
+          processName: servicesInfo.processName.value,
+          splitName: servicesInfo.splitName.value,
+          name: servicesInfo.name.value,
+          permission: servicesInfo.permission.value,
+        };
+        return info;
+      })
+    )
   });
 };
 
-export const getBroadcastReceivers = (): Promise<string[]> => {
+export const getBroadcastReceivers = (): Promise<IBroadcastReceiverInfo[]> => {
   return wrapJavaPerform(() => {
     const activityThread: ActivityThread = Java.use("android.app.ActivityThread");
     const arrayMap: ArrayMap = Java.use("android.util.ArrayMap");
@@ -481,13 +494,60 @@ export const getBroadcastReceivers = (): Promise<string[]> => {
       });
     });
 
-    receivers = receivers.concat(context.getPackageManager()
+    return receivers.concat(context.getPackageManager()
       .getPackageInfo(context.getPackageName(), GET_RECEIVERS).receivers.value.map((activityInfo) => {
-        return activityInfo.name.value;
+        const info: IActivityInfo = {
+          exported: activityInfo.exported.value,
+          enabled: activityInfo.enabled.value,
+          processName: activityInfo.processName.value,
+          splitName: activityInfo.splitName.value,
+          name: activityInfo.name.value,
+          permission: activityInfo.permission.value,
+        };
+        return info;
       }),
     );
+  });
+};
 
-    return receivers;
+export const getContentProviders = (): Promise<IContentProviderInfo[]> => {
+  return wrapJavaPerform(() => {
+    const activityThread: ActivityThread = Java.use("android.app.ActivityThread");
+    const arrayMap: ArrayMap = Java.use("android.util.ArrayMap");
+    const packageManager: PackageManager = Java.use("android.content.pm.PackageManager");
+
+    const GET_RECEIVERS = packageManager.GET_RECEIVERS.value;
+
+    const currentApplication = activityThread.currentApplication();
+    // not using the helper as we need other variables too
+    const context = currentApplication.getApplicationContext();
+
+    let receivers = [];
+
+    currentApplication.mLoadedApk.value.mReceivers.value.values().toArray().map((potentialReceivers) => {
+      Java.cast(potentialReceivers, arrayMap).keySet().toArray().map((receiver) => {
+        receivers.push(receiver.$className);
+      });
+    });
+
+    return receivers.concat(context.getPackageManager()
+      .getPackageInfo(context.getPackageName(), GET_RECEIVERS).receivers.value.map((providerInfo) => {
+        const info: IContentProviderInfo = {
+          exported: providerInfo.exported.value,
+          enabled: providerInfo.enabled.value,
+          processName: providerInfo.processName.value,
+          splitName: providerInfo.splitName.value,
+          name: providerInfo.name.value,
+          permission: providerInfo.permission.value,
+          readPermission: providerInfo.readPermission.value,
+          writePermission: providerInfo.writePermission.value,
+          multiprocess: providerInfo.multiprocess.value,
+          isSyncable:providerInfo.isSyncable.value,
+          authority: providerInfo.authority.value,
+        };
+        return info;
+      }),
+    );
   });
 };
 

@@ -12,9 +12,13 @@ import * as proxy from "../android/proxy";
 import * as general from "../android/general";
 
 import {
+  IActivityInfo,
+  IBroadcastReceiverInfo,
+  IContentProviderInfo,
   IHeapObject,
   IJavaField,
-  IKeyStoreDetail
+  IKeyStoreDetail,
+  IServiceInfo
 } from "../android/lib/interfaces";
 import {
   ICurrentActivityFragment,
@@ -50,9 +54,11 @@ export const android = {
   androidHookingGetClasses: (): Promise<string[]> => hooking.getClasses(),
   androidHookingGetClassLoaders: (): Promise<string[]> => hooking.getClassLoaders(),
   androidHookingGetCurrentActivity: (): Promise<ICurrentActivityFragment> => hooking.getCurrentActivity(),
-  androidHookingListActivities: (): Promise<string[]> => hooking.getActivities(),
-  androidHookingListBroadcastReceivers: (): Promise<string[]> => hooking.getBroadcastReceivers(),
-  androidHookingListServices: (): Promise<string[]> => hooking.getServices(),
+  androidHookingListActivities: (): Promise<IActivityInfo[]> => hooking.getActivities(),
+  androidHookingListBroadcastReceivers: (): Promise<IBroadcastReceiverInfo[]> => hooking.getBroadcastReceivers(),
+  androidHookingListServices: (): Promise<IServiceInfo[]> => hooking.getServices(),
+  androidHookingListContentProviders: (): Promise<IContentProviderInfo[]> => hooking.getContentProviders(),
+
   androidHookingSetMethodReturn: (fqClazz: string, filterOverload: string | null, ret: boolean) =>
     hooking.setReturnValue(fqClazz, filterOverload, ret),
   androidHookingWatch: (pattern: string, watchArgs: boolean, watchBacktrace: boolean, watchRet: boolean): Promise<void> =>
